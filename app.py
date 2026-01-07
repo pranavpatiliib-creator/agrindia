@@ -519,25 +519,22 @@ def handle_message(message, phone_number):
 
 # ==================== FLASK ROUTES ====================
 
-@app.route('/bot', methods=['POST'])
+@app.route("/bot", methods=["POST"])
+@app.route("/whatsapp", methods=["POST"])   # both supported
 def whatsapp():
-    """Twilio WhatsApp Webhook"""
-    incoming_msg = request.values.get('Body', '').strip()
-    phone_number = request.values.get('From', '')
+    incoming_msg = request.values.get("Body", "").strip()
+    phone_number = request.values.get("From", "")
 
-    # LOG incoming message (important)
-    print(f"📩 From: {phone_number} | Message: {incoming_msg}")
+    print(f"📩 WhatsApp | From: {phone_number} | Msg: {incoming_msg}")
 
     try:
         response_text = handle_message(incoming_msg, phone_number)
     except Exception as e:
-        print("❌ Error:", e)
+        print("❌ Bot Error:", e)
         response_text = "⚠️ काहीतरी चूक झाली आहे. कृपया पुन्हा प्रयत्न करा."
 
     resp = MessagingResponse()
-    msg = resp.message()
-    msg.body(response_text)
-
+    resp.message(response_text)
     return str(resp)
 
 
